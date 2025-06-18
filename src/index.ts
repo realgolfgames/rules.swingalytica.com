@@ -23,7 +23,7 @@ const fastify = Fastify({ logger: true });
 
 await fastify.register(env, {
   schema: env_schema,
-  dotenv: true
+  dotenv: false
 });
 
 await fastify.register(rootRoute).register(healthRoot);

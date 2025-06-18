@@ -6,10 +6,12 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsup",
+    "start": "node dist/index.js",
     "lint": "eslint . --ext .ts",
     "format": "prettier --write .",
     "test": "jest",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "pre-test-e2e": "pnpm build && pnpm start"
   },
   "keywords": [],
   "author": "RealGolf.Games UG (haftungsbeschränkt) & Contributors",
