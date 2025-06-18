@@ -1,7 +1,7 @@
 {
   "name": "golfrules-api",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.1.0",
+  "description": "Open source API providing access to official golf rules. Enables easy retrieval of rule texts, versioning, and structured data — perfect for developers, clubs, and golf apps.",
   "main": "index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
@@ -12,7 +12,11 @@
     "test:e2e": "playwright test"
   },
   "keywords": [],
-  "author": "",
+  "author": "RealGolf.Games UG (haftungsbeschränkt) & Contributors",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/realgolfgames/golfrules-api.git"
+  },
   "license": "Apache-2.0",
   "type": "module",
   "packageManager": "pnpm@10.11.0",
@@ -25,7 +29,6 @@
     "@eslint/js": "^9.29.0",
     "@fastify/autoload": "^6.3.1",
     "@fastify/env": "^5.0.2",
-    "@fastify/swagger": "^9.5.1",
     "@playwright/test": "^1.53.1",
     "@types/jest": "^30.0.0",
     "@types/node": "^24.0.3",
