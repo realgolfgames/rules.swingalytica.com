@@ -14,3 +14,5 @@
 - [ ] `includeExamples` (bool): Include example texts (default: false)
 - [ ] `includeReferences` (bool): Include cross-references/links (default: false)
 - [x] `id` (number): Get one specific rule from the database
+
+- [ ] Add more languages
