@@ -1,4 +1,4 @@
-export type warning = {
+export type Warning = {
   query: string;
   message: string;
 };

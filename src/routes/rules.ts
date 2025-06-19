@@ -7,7 +7,7 @@ import { schemas } from '../lib/schemas/schemas';
 import { checkLanguage } from '../lib/utils/check_language';
 import { groupRules } from '../lib/utils/group_rules';
 import { Rule } from '../types/models';
-import { warning } from '../types/response';
+import { Warning } from '../types/response';
 
 const rulesRoute: FastifyPluginAsync = async (fastify) => {
   for (const schema of Object.values(schemas.schemas)) {
@@ -19,7 +19,7 @@ const rulesRoute: FastifyPluginAsync = async (fastify) => {
       querystring: schemas.$ref('RulesQuerySchema')
     },
     handler: async (req, _res) => {
-      const warnings: warning[] = [];
+      const warnings: Warning[] = [];
       const { limit, skip, grouped, language, id } =
         rules_query_schema.parse(req.query);
 

@@ -1,16 +1,16 @@
-import { warning } from '../../types/response';
+import { Warning } from '../../types/response';
 
 export function checkLanguage(language: string): {
-  warning: warning;
+  warning: Warning;
 } {
   if (language !== 'de') {
-    const warningObj = {
+    const warning_obj = {
       query: 'language',
       message: `Unsupported language: ${language}. Only 'de' is supported.`
     };
 
-    return { warning: warningObj };
+    return { warning: warning_obj };
   }
 
-  return { warning: {} as unknown as warning };
+  return { warning: {} as unknown as Warning };
 }
