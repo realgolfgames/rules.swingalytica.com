@@ -24,6 +24,7 @@
   "packageManager": "pnpm@10.11.0",
   "dependencies": {
     "fastify": "^5.4.0",
+    "fastify-zod": "^1.4.0",
     "mongoose": "^8.16.0",
     "zod": "^3.25.67"
   },
