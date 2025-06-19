@@ -72,3 +72,45 @@ test.describe('/rules endpoint', () => {
     });
   });
 });
+
+test('GET /rules?language=en returns warning about language', async ({
+  request
+}) => {
+  const res = await request.get('/rules?language=en');
+  expect(res.status()).toBe(200);
+
+  const body = await res.json();
+  expect(body).toHaveProperty('warnings');
+  expect(Array.isArray(body.warnings)).toBe(true);
+  expect(body.warnings.length).toBeGreaterThan(0);
+
+  const warning = body.warnings.find(
+    (w: any) => w.query === 'language'
+  );
+  expect(warning).toBeDefined();
+  expect(warning.message).toMatch(
+    /only support the German language/i
+  );
+  expect(warning.message).toMatch(/en is currently not supported/i);
+});
+
+test('GET /rules?limit=-1 returns 400 for invalid limit', async ({
+  request
+}) => {
+  const res = await request.get('/rules?limit=-1');
+  expect(res.status()).toBe(400);
+});
+
+test('GET /rules?skip=26 returns 400 for invalid skip', async ({
+  request
+}) => {
+  const res = await request.get('/rules?skip=26');
+  expect(res.status()).toBe(400);
+  const body = await res.json();
+  expect(body).toEqual({
+    statusCode: 400,
+    code: 'FST_ERR_VALIDATION',
+    error: 'Bad Request',
+    message: 'querystring/skip must be <= 25'
+  });
+});

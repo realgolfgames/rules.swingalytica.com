@@ -9,7 +9,8 @@ import { Rule } from '../types/models';
 const rules_query_schema = z.object({
   limit: z.coerce.number().int().min(1).max(25).default(25),
   skip: z.coerce.number().int().min(0).max(25).default(0),
-  grouped: z.string().optional().default('true')
+  grouped: z.string().optional().default('true'),
+  language: z.string().optional().default('de')
 });
 
 const schemas = buildJsonSchemas(
@@ -23,14 +24,25 @@ const rulesRoute: FastifyPluginAsync = async (fastify) => {
   }
 
   fastify.get('/rules', {
-    // schema: {
-    //   querystring: schemas.$ref('RulesQuerySchema'),
-    //   response: rules_response_schema
-    // },
+    schema: {
+      querystring: schemas.$ref('RulesQuerySchema')
+      // response: rules_response_schema
+    },
     handler: async (req, _res) => {
-      const { limit, skip, grouped } = rules_query_schema.parse(
-        req.query
-      );
+      const warnings: { query: string; message: string }[] = [];
+      const { limit, skip, grouped, language } =
+        rules_query_schema.parse(req.query);
+
+      // FIXME: Currently, we only support the German language.
+      // This should be removed once we support more languages.
+      const current_language = 'de';
+
+      if (language !== current_language) {
+        warnings.push({
+          query: 'language',
+          message: `${language} is currently not supported, we currently only support the German language. We are working on adding more languages in the future.`
+        });
+      }
 
       const rules = await rule_model
         .find()
@@ -44,6 +56,7 @@ const rulesRoute: FastifyPluginAsync = async (fastify) => {
 
         return {
           data: grouped_rules,
+          warnings,
           returned: rules.length,
           total: await rule_model.countDocuments()
         };
@@ -51,6 +64,7 @@ const rulesRoute: FastifyPluginAsync = async (fastify) => {
 
       return {
         data: rules,
+        warnings,
         returned: rules.length,
         total: await rule_model.countDocuments()
       };
