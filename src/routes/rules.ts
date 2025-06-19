@@ -7,8 +7,8 @@ import { groupRules } from '../lib/utils/group_rules';
 import { Rule } from '../types/models';
 
 const rules_query_schema = z.object({
-  limit: z.coerce.number().int().min(1).max(100).default(25),
-  skip: z.coerce.number().int().min(0).default(0),
+  limit: z.coerce.number().int().min(1).max(25).default(25),
+  skip: z.coerce.number().int().min(0).max(25).default(0),
   grouped: z.string().optional().default('true')
 });
 
