@@ -1,59 +1,23 @@
-export const rules_response_schema = {
-  200: {
-    type: 'object',
-    properties: {
-      data: {
-        type: 'array',
-        items: {
-          type: 'object',
-          properties: {
-            title: { type: 'string' },
-            rules: {
-              type: 'array',
-              items: {
-                type: 'object',
-                properties: {
-                  id: { type: 'string' },
-                  title: { type: 'string' },
-                  content: { type: 'string' },
-                  toc: {
-                    type: 'object',
-                    properties: {
-                      h2: {
-                        type: 'array',
-                        items: {
-                          type: 'object',
-                          properties: {
-                            id: { type: 'string' },
-                            text: { type: 'string' },
-                            h3: {
-                              type: 'array',
-                              items: {
-                                type: 'object',
-                                properties: {
-                                  id: { type: 'string' },
-                                  text: { type: 'string' }
-                                },
-                                required: ['id', 'text']
-                              }
-                            }
-                          },
-                          required: ['id', 'text']
-                        }
-                      }
-                    },
-                    required: ['h2']
-                  }
-                },
-                required: ['id', 'title', 'content', 'toc']
-              }
-            }
-          },
-          required: ['title', 'rules']
-        }
-      },
-      total: { type: 'number' }
-    },
-    required: ['data', 'total']
-  }
-} as const;
+import z from 'zod';
+
+export const rules_response_schema = z.object({
+  id: z.string(),
+  title: z.string(),
+  content: z.string(),
+  toc: z.object({
+    h2: z.array(
+      z.object({
+        id: z.string(),
+        text: z.string(),
+        h3: z
+          .array(
+            z.object({
+              id: z.string(),
+              text: z.string()
+            })
+          )
+          .optional()
+      })
+    )
+  })
+});

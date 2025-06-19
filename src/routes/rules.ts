@@ -1,5 +1,7 @@
 import { FastifyPluginAsync } from 'fastify';
 import { rule_model } from '../lib/models';
+import { flat_rules_response_schema } from '../lib/schemas/flat_rules_response_schema';
+import { grouped_rules_response_schema } from '../lib/schemas/grouped_rules_response_schema';
 import { rules_query_schema } from '../lib/schemas/rules_query_schema';
 import { schemas } from '../lib/schemas/schemas';
 import { checkLanguage } from '../lib/utils/check_language';
@@ -15,7 +17,6 @@ const rulesRoute: FastifyPluginAsync = async (fastify) => {
   fastify.get('/rules', {
     schema: {
       querystring: schemas.$ref('RulesQuerySchema')
-      // response: rules_response_schema
     },
     handler: async (req, _res) => {
       const warnings: warning[] = [];
@@ -36,12 +37,28 @@ const rulesRoute: FastifyPluginAsync = async (fastify) => {
       const data =
         grouped === 'true' ? groupRules(rules as Rule[]) : rules;
 
-      return {
+      const response_body = {
         data,
         warnings,
         returned: rules.length,
         total: await rule_model.countDocuments()
       };
+
+      try {
+        if (grouped === 'true') {
+          grouped_rules_response_schema.parse(response_body);
+        } else {
+          flat_rules_response_schema.parse(response_body);
+        }
+      } catch (err) {
+        _res.status(500).send({
+          error: 'Internal Server Error – Invalid response schema',
+          details: err
+        });
+        return;
+      }
+
+      return response_body;
     }
   });
 };
