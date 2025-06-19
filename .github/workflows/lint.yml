@@ -1,0 +1,33 @@
+name: Lint
+
+on:
+    push:
+        branches: [ "main" ]
+    pull_request:
+        branches: [ "main" ]
+    schedule:
+        - cron: '00 8 * * 5'
+
+jobs:
+    lint:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Set up pnpm
+              uses: pnpm/action-setup@v2
+              with:
+                version: 8.x
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v3
+              with:
+                node-version: '22.0.0'
+                cache: 'pnpm'
+
+            - name: Install dependencies
+              run: pnpm install --frozen-lockfile
+
+            - name: Lint project
+              run: pnpm lint
