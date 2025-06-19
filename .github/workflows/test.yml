@@ -26,9 +26,6 @@ jobs:
           node-version: '22.0.0'
           cache: 'pnpm'
 
-      - name: Install ts-node
-        run: pnpm add -D ts-node
-
       - name: Install dependencies
         run: pnpm install
 
