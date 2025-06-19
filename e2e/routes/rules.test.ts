@@ -1,10 +1,10 @@
 import { expect, test } from '@playwright/test';
 
 test.describe('/rules endpoint', () => {
-  test('GET /rules returns grouped rules with total', async ({
+  test('GET /rules?grouped=true returns grouped rules with total', async ({
     request
   }) => {
-    const res = await request.get('/rules');
+    const res = await request.get('/rules?grouped=true');
     expect(res.status()).toBe(200);
 
     const body = await res.json();
@@ -35,6 +35,25 @@ test.describe('/rules endpoint', () => {
     request
   }) => {
     const res = await request.get('/rules?grouped=false');
+    expect(res.status()).toBe(200);
+
+    const body = await res.json();
+    expect(body).toHaveProperty('data');
+    expect(Array.isArray(body.data)).toBe(true);
+    expect(body.data.length).toBeGreaterThan(0);
+
+    // Check that rules are not grouped
+    body.data.forEach((rule: any) => {
+      expect(rule).toHaveProperty('title');
+      expect(rule).toHaveProperty('id');
+      expect(rule).toHaveProperty('content');
+      expect(rule).toHaveProperty('toc');
+      expect(rule).not.toHaveProperty('rules');
+    });
+  });
+
+  test('GET /rules returns ungrouped rules', async ({ request }) => {
+    const res = await request.get('/rules');
     expect(res.status()).toBe(200);
 
     const body = await res.json();
@@ -88,10 +107,10 @@ test('GET /rules?language=en returns warning about language', async ({
     (w: any) => w.query === 'language'
   );
   expect(warning).toBeDefined();
+
   expect(warning.message).toMatch(
-    /only support the German language/i
+    /en is currently not supported. Only 'de' is available./i
   );
-  expect(warning.message).toMatch(/en is currently not supported/i);
 });
 
 test('GET /rules?limit=-1 returns 400 for invalid limit', async ({
@@ -113,4 +132,22 @@ test('GET /rules?skip=26 returns 400 for invalid skip', async ({
     error: 'Bad Request',
     message: 'querystring/skip must be <= 25'
   });
+});
+
+test('GET /rules?id=1 returns specific rule by id', async ({
+  request
+}) => {
+  const res = await request.get('/rules?id=1');
+  expect(res.status()).toBe(200);
+
+  const body = await res.json();
+  expect(body).toHaveProperty('data');
+  expect(Array.isArray(body.data)).toBe(true);
+  expect(body.data.length).toBe(1);
+
+  const rule = body.data[0];
+  expect(rule).toHaveProperty('order', 1);
+  expect(rule).toHaveProperty('title');
+  expect(rule).toHaveProperty('content');
+  expect(rule).toHaveProperty('toc');
 });

@@ -8,8 +8,9 @@ import { Rule } from '../types/models';
 const rules_query_schema = z.object({
   limit: z.coerce.number().int().min(1).max(25).default(25),
   skip: z.coerce.number().int().min(0).max(25).default(0),
-  grouped: z.string().optional().default('true'),
-  language: z.string().optional().default('de')
+  grouped: z.string().optional().default('false'),
+  language: z.string().optional().default('de'),
+  id: z.coerce.number().int().max(25).optional()
 });
 
 const schemas = buildJsonSchemas(
@@ -29,40 +30,31 @@ const rulesRoute: FastifyPluginAsync = async (fastify) => {
     },
     handler: async (req, _res) => {
       const warnings: { query: string; message: string }[] = [];
-      const { limit, skip, grouped, language } =
+      const { limit, skip, grouped, language, id } =
         rules_query_schema.parse(req.query);
 
-      // FIXME: Currently, we only support the German language.
-      // This should be removed once we support more languages.
-      const current_language = 'de';
-
-      if (language !== current_language) {
+      // FIXME: Add support for other languages in the future
+      if (language !== 'de') {
         warnings.push({
           query: 'language',
-          message: `${language} is currently not supported, we currently only support the German language. We are working on adding more languages in the future.`
+          message: `${language} is currently not supported. Only 'de' is available.`
         });
       }
 
+      const query: { order?: number } = id ? { order: id } : {};
+
       const rules = await rule_model
-        .find()
+        .find(query)
         .sort({ order: 1 })
         .skip(skip)
         .limit(limit)
         .lean();
 
-      if (grouped === 'true') {
-        const grouped_rules = groupRules(rules as Rule[]);
-
-        return {
-          data: grouped_rules,
-          warnings,
-          returned: rules.length,
-          total: await rule_model.countDocuments()
-        };
-      }
+      const data =
+        grouped === 'true' ? groupRules(rules as Rule[]) : rules;
 
       return {
-        data: rules,
+        data,
         warnings,
         returned: rules.length,
         total: await rule_model.countDocuments()
