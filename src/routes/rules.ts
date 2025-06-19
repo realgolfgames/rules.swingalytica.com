@@ -1,4 +1,3 @@
-// src/routes/rules.ts
 import { FastifyPluginAsync } from 'fastify';
 import { buildJsonSchemas } from 'fastify-zod';
 import { z } from 'zod';
