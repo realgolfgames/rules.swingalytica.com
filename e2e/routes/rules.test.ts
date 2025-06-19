@@ -109,7 +109,7 @@ test('GET /rules?language=en returns warning about language', async ({
   expect(warning).toBeDefined();
 
   expect(warning.message).toMatch(
-    /en is currently not supported. Only 'de' is available./i
+    /Unsupported language: en. Only 'de' is supported./i
   );
 });
 
