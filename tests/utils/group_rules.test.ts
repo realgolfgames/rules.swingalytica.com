@@ -5,24 +5,28 @@ describe('groupRules', () => {
   it('groups rules correctly based on title prefixes', () => {
     const mockRules: Rule[] = [
       {
+        order: 1,
         title: 'Regel 1 Golf',
         id: '1',
         content: '',
         toc: { h2: [] as any }
       },
       {
+        order: 5,
         title: 'Regel 5 Spiel',
         id: '5',
         content: '',
         toc: { h2: [] as any }
       },
       {
+        order: 13,
         title: 'Regel 13 Grün',
         id: '13',
         content: '',
         toc: { h2: [] as any }
       },
       {
+        order: 100,
         title: 'Definitionen',
         id: 'def',
         content: '',

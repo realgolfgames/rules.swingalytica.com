@@ -30,4 +30,45 @@ test.describe('/rules endpoint', () => {
     const allRules = body.data.flatMap((group: any) => group.rules);
     expect(allRules.length).toBeLessThanOrEqual(5);
   });
+
+  test('GET /rules?grouped=false returns ungrouped rules', async ({
+    request
+  }) => {
+    const res = await request.get('/rules?grouped=false');
+    expect(res.status()).toBe(200);
+
+    const body = await res.json();
+    expect(body).toHaveProperty('data');
+    expect(Array.isArray(body.data)).toBe(true);
+    expect(body.data.length).toBeGreaterThan(0);
+
+    // Check that rules are not grouped
+    body.data.forEach((rule: any) => {
+      expect(rule).toHaveProperty('title');
+      expect(rule).toHaveProperty('id');
+      expect(rule).toHaveProperty('content');
+      expect(rule).toHaveProperty('toc');
+      expect(rule).not.toHaveProperty('rules');
+    });
+  });
+
+  test('GET /rules?grouped=true returns ungrouped rules', async ({
+    request
+  }) => {
+    const res = await request.get('/rules?grouped=true');
+    expect(res.status()).toBe(200);
+
+    const body = await res.json();
+    expect(body).toHaveProperty('data');
+    expect(Array.isArray(body.data)).toBe(true);
+    expect(body.data.length).toBeGreaterThan(0);
+
+    body.data.forEach((rule: any) => {
+      expect(rule).toHaveProperty('title');
+      expect(rule).not.toHaveProperty('id');
+      expect(rule).not.toHaveProperty('content');
+      expect(rule).not.toHaveProperty('toc');
+      expect(rule).toHaveProperty('rules');
+    });
+  });
 });
