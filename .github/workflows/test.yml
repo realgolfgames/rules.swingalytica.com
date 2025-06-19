@@ -11,6 +11,11 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+
+    env:
+      MONGO_URI: ${{ secrets.MONGO_URI }}
+      PORT: ${{ secrets.PORT }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
