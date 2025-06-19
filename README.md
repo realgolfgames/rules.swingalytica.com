@@ -10,7 +10,6 @@ This project is open for contributions under the [Apache 2.0 License](./LICENSE)
 - REST API to query structured golf rules
 - MongoDB backend with versioned rule sets
 - Self-hostable, or usable via our hosted API
-- OpenAPI/Swagger documentation included
 
 ## Usage
 
