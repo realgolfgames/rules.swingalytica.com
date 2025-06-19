@@ -6,14 +6,14 @@ import { rule_model } from '../lib/models';
 import { groupRules } from '../lib/utils/group_rules';
 import { Rule } from '../types/models';
 
-const RulesQuerySchema = z.object({
+const rules_query_schema = z.object({
   limit: z.coerce.number().int().min(1).max(100).default(25),
   skip: z.coerce.number().int().min(0).default(0),
   grouped: z.string().optional().default('true')
 });
 
 const schemas = buildJsonSchemas(
-  { RulesQuerySchema },
+  { RulesQuerySchema: rules_query_schema },
   { $id: 'RulesQuerySchema' }
 );
 
@@ -27,8 +27,8 @@ const rulesRoute: FastifyPluginAsync = async (fastify) => {
     //   querystring: schemas.$ref('RulesQuerySchema'),
     //   response: rules_response_schema
     // },
-    handler: async (req, res) => {
-      const { limit, skip, grouped } = RulesQuerySchema.parse(
+    handler: async (req, _res) => {
+      const { limit, skip, grouped } = rules_query_schema.parse(
         req.query
       );
 

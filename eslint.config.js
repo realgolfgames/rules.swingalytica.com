@@ -14,7 +14,7 @@ export default [
     ignores: [
       '**/.DS_Store',
       '**/node_modules',
-      '**/build',
+      '**/dist',
       '**/.env*',
       '!**/.env.example',
       '**/pnpm-lock.yaml',
@@ -23,7 +23,8 @@ export default [
       'coverage',
       '**/__mocks__',
       '**/*.config.*',
-      '**/e2e/**'
+      '**/e2e/**',
+      '**/tests/**'
     ]
   },
 
@@ -66,8 +67,7 @@ export default [
           format: ['snake_case', 'UPPER_CASE'],
           leadingUnderscore: 'allow',
           filter: {
-            regex:
-              '^(__filename|__dirname|GET|POST|DELETE|PATCH|PUT|OPTIONS|HEAD|__VERSION__)$',
+            regex: '^(__filename|__dirname|.*Route|.*Root)$',
             match: false
           }
         },
@@ -86,6 +86,7 @@ export default [
       '@typescript-eslint/no-explicit-any': 'error',
       'eslint-comments/no-use': ['error', { allow: [] }],
       'no-undef': 'off',
+      'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': [
         'error',
         {
