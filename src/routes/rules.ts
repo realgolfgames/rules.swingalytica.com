@@ -3,14 +3,13 @@ import { FastifyPluginAsync } from 'fastify';
 import { buildJsonSchemas } from 'fastify-zod';
 import { z } from 'zod';
 import { rule_model } from '../lib/models';
-import { rules_response_schema } from '../lib/schemas/rules_response_schema';
 import { groupRules } from '../lib/utils/group_rules';
-import { sortRules } from '../lib/utils/sort_rules';
 import { Rule } from '../types/models';
 
 const RulesQuerySchema = z.object({
-  limit: z.coerce.number().int().min(1).max(100).default(10),
-  skip: z.coerce.number().int().min(0).default(0)
+  limit: z.coerce.number().int().min(1).max(100).default(25),
+  skip: z.coerce.number().int().min(0).default(0),
+  grouped: z.string().optional().default('true')
 });
 
 const schemas = buildJsonSchemas(
@@ -24,25 +23,35 @@ const rulesRoute: FastifyPluginAsync = async (fastify) => {
   }
 
   fastify.get('/rules', {
-    schema: {
-      querystring: schemas.$ref('RulesQuerySchema'),
-      response: rules_response_schema
-    },
+    // schema: {
+    //   querystring: schemas.$ref('RulesQuerySchema'),
+    //   response: rules_response_schema
+    // },
     handler: async (req, res) => {
-      const { limit, skip } = RulesQuerySchema.parse(req.query);
+      const { limit, skip, grouped } = RulesQuerySchema.parse(
+        req.query
+      );
 
       const rules = await rule_model
         .find()
+        .sort({ order: 1 })
         .skip(skip)
         .limit(limit)
         .lean();
 
-      const sorted_rules = sortRules(rules as Rule[]);
+      if (grouped === 'true') {
+        const grouped_rules = groupRules(rules as Rule[]);
 
-      const grouped_rules = groupRules(sorted_rules);
+        return {
+          data: grouped_rules,
+          returned: rules.length,
+          total: await rule_model.countDocuments()
+        };
+      }
 
       return {
-        data: grouped_rules,
+        data: rules,
+        returned: rules.length,
         total: await rule_model.countDocuments()
       };
     }

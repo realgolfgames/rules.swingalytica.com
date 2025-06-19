@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 
 const rule_schema = new mongoose.Schema({
+  order: { type: Number, required: true, unique: true },
   id: { type: String, required: true, unique: true },
   title: { type: String, required: true },
   content: { type: String, required: true },
