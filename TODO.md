@@ -8,7 +8,7 @@
 - [ ] `category` (string): Filter by rule category (e.g., "penalties")
 - [ ] `sortBy` (string): Sort field (e.g., "ruleNumber", "priority", "updatedAt")
 - [ ] `sortOrder` (string): Sort order ("asc" or "desc", default: "asc")
-- [ ] `language` (string): Language filter (e.g., "en", "de") if multilingual
+- [ ] `language` (string): Language filter (e.g., "en", "de")
 
 - [ ] `version` (string): Version number or date to query older rule versions
 - [ ] `includeExamples` (bool): Include example texts (default: false)
