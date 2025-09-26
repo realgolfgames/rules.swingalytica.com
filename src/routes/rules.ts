@@ -1,4 +1,5 @@
 import { FastifyPluginAsync } from 'fastify';
+import { HttpError } from '../lib/class/HttpError';
 import { default_params } from '../lib/const/default_params';
 import { desired_order } from '../lib/const/desired_order';
 import { rule_model } from '../lib/models';
@@ -20,12 +21,10 @@ const rulesRoute: FastifyPluginAsync = async (fastify) => {
       const parsed = rules_params_schema.safeParse(req.query);
 
       if (!parsed.success) {
-        const error = new Error(
-          `Invalid query parameters: ${JSON.stringify(parsed.error.issues[0].message)}`
+        throw new HttpError(
+          `Invalid query parameters: ${JSON.stringify(parsed.error.issues[0].message)}`,
+          400
         );
-        // @ts-ignore
-        error.statusCode = 400;
-        throw error;
       }
 
       const params: Params = parsed.data;
@@ -39,7 +38,6 @@ const rulesRoute: FastifyPluginAsync = async (fastify) => {
       if (is_default) {
         return await defaultQuery(params);
       } else {
-        console.log(params);
         const skip = params.skip || 0;
         const { limit } = params;
 
@@ -62,8 +60,7 @@ const rulesRoute: FastifyPluginAsync = async (fastify) => {
             }
           },
           { $sort: { sortIndex: 1, title: 1 } },
-          { $skip: skip },
-          { $limit: limit }
+          { $skip: skip }
         ];
 
         if (limit != null) pipeline.push({ $limit: limit });
