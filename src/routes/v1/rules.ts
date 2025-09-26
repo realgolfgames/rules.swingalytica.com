@@ -7,6 +7,7 @@ import { rules_params_schema } from '../../lib/schemas/rules_params_schema';
 import { schemas } from '../../lib/schemas/schemas';
 import { Params } from '../../lib/types';
 import { defaultQuery } from '../../lib/utils/default_query';
+import { getIsDefault } from '../../lib/utils/get_id_default';
 
 const rulesRoute: FastifyPluginAsync = async (fastify) => {
   for (const schema of Object.values(schemas.schemas)) {
@@ -28,12 +29,7 @@ const rulesRoute: FastifyPluginAsync = async (fastify) => {
       }
 
       const params: Params = parsed.data;
-
-      const is_default =
-        params.limit === default_params.limit &&
-        params.skip === default_params.skip &&
-        params.grouped === default_params.grouped &&
-        params.language === default_params.language;
+      const is_default = getIsDefault(params, default_params);
 
       if (is_default) {
         return await defaultQuery(params);
