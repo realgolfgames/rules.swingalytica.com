@@ -4,7 +4,7 @@ import Fastify from 'fastify';
 import { connectToDB } from './lib/db';
 import healthRoot from './routes/health';
 import rootRoute from './routes/root';
-import rulesRoute from './routes/rules';
+import rulesRoute from './routes/v1/rules';
 
 const env_schema = {
   type: 'object',

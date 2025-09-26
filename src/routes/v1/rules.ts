@@ -1,19 +1,19 @@
 import { FastifyPluginAsync } from 'fastify';
-import { HttpError } from '../lib/class/HttpError';
-import { default_params } from '../lib/const/default_params';
-import { desired_order } from '../lib/const/desired_order';
-import { rule_model } from '../lib/models';
-import { rules_params_schema } from '../lib/schemas/rules_params_schema';
-import { schemas } from '../lib/schemas/schemas';
-import { Params } from '../lib/types';
-import { defaultQuery } from '../lib/utils/default_query';
+import { HttpError } from '../../lib/class/HttpError';
+import { default_params } from '../../lib/const/default_params';
+import { desired_order } from '../../lib/const/desired_order';
+import { rule_model } from '../../lib/models';
+import { rules_params_schema } from '../../lib/schemas/rules_params_schema';
+import { schemas } from '../../lib/schemas/schemas';
+import { Params } from '../../lib/types';
+import { defaultQuery } from '../../lib/utils/default_query';
 
 const rulesRoute: FastifyPluginAsync = async (fastify) => {
   for (const schema of Object.values(schemas.schemas)) {
     fastify.addSchema(schema);
   }
 
-  fastify.get('/rules', {
+  fastify.get('/v1/rules', {
     schema: {
       params: schemas.$ref('RulesParamsSchema')
     },
