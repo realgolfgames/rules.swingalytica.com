@@ -9,7 +9,7 @@ const rootRoute: FastifyPluginAsync = async (fastify) => {
     author: pkg.author,
     repository: pkg.repository,
     license: pkg.license,
-    docs: 'https://realgolf.games/developer/docs',
+    docs: 'https://swingalytica.com/docs/api/rules',
     status: 200
   }));
 };
