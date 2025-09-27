@@ -1,7 +1,7 @@
 import { FastifyPluginAsync } from 'fastify';
+import { PipelineStage } from 'mongoose';
 import { HttpError } from '../../lib/class/HttpError';
 import { default_params } from '../../lib/const/default_params';
-import { desired_order } from '../../lib/const/desired_order';
 import { rule_model } from '../../lib/models';
 import { rules_params_schema } from '../../lib/schemas/rules_params_schema';
 import { schemas } from '../../lib/schemas/schemas';
@@ -9,6 +9,7 @@ import { Params } from '../../lib/types';
 import { defaultQuery } from '../../lib/utils/default_query';
 import { getIsDefault } from '../../lib/utils/get_id_default';
 import { groupRules } from '../../lib/utils/group_rules';
+import { pipeline } from '../../lib/utils/pipeline';
 import { Rule } from '../../types/models';
 
 const rulesRoute: FastifyPluginAsync = async (fastify) => {
@@ -36,28 +37,9 @@ const rulesRoute: FastifyPluginAsync = async (fastify) => {
       if (is_default) {
         return await defaultQuery(params);
       } else if (params.grouped === 'true') {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const pipeline: any[] = [
-          {
-            $set: {
-              sortIndex: { $indexOfArray: [desired_order, '$title'] }
-            }
-          },
-          {
-            $set: {
-              sortIndex: {
-                $cond: [
-                  { $lt: ['$sortIndex', 0] },
-                  9999,
-                  '$sortIndex'
-                ]
-              }
-            }
-          },
-          { $sort: { sortIndex: 1, title: 1 } }
-        ];
-
-        const rules = await rule_model.aggregate(pipeline).exec();
+        const rules = await rule_model
+          .aggregate(pipeline as PipelineStage[])
+          .exec();
 
         const grouped_rules = groupRules(rules as Rule[]);
 
@@ -66,31 +48,26 @@ const rulesRoute: FastifyPluginAsync = async (fastify) => {
         const skip = params.skip || 0;
         const { limit } = params;
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const pipeline: any[] = [
-          {
-            $set: {
-              sortIndex: { $indexOfArray: [desired_order, '$title'] }
-            }
-          },
-          {
-            $set: {
-              sortIndex: {
-                $cond: [
-                  { $lt: ['$sortIndex', 0] },
-                  9999,
-                  '$sortIndex'
-                ]
-              }
-            }
-          },
-          { $sort: { sortIndex: 1, title: 1 } },
-          { $skip: skip }
-        ];
+        if (pipeline.find((stage) => stage.$skip != null)) {
+          pipeline.splice(
+            pipeline.findIndex((stage) => stage.$skip != null),
+            1
+          );
+        }
 
+        if (pipeline.find((stage) => stage.$limit != null)) {
+          pipeline.splice(
+            pipeline.findIndex((stage) => stage.$limit != null),
+            1
+          );
+        }
+
+        if (skip != null) pipeline.push({ $skip: skip });
         if (limit != null) pipeline.push({ $limit: limit });
 
-        const rules = await rule_model.aggregate(pipeline).exec();
+        const rules = await rule_model
+          .aggregate(pipeline as PipelineStage[])
+          .exec();
 
         return { rules };
       }
