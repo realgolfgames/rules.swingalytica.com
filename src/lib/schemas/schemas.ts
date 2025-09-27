@@ -1,7 +1,7 @@
 import { buildJsonSchemas } from 'fastify-zod';
-import { rules_query_schema } from './rules_query_schema';
+import { rules_params_schema } from './rules_params_schema';
 
 export const schemas = buildJsonSchemas(
-  { RulesQuerySchema: rules_query_schema },
-  { $id: 'RulesQuerySchema' }
+  { RulesParamsSchema: rules_params_schema },
+  { $id: 'RulesParamsSchema' }
 );

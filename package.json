@@ -19,7 +19,7 @@
   "author": "RealGolf.Games UG (haftungsbeschränkt) & Contributors",
   "repository": {
     "type": "git",
-    "url": "https://github.com/realgolfgames/golfrules-api.git"
+    "url": "https://github.com/realgolfgames/rules.swingalytica.com.git"
   },
   "license": "Apache-2.0",
   "type": "module",

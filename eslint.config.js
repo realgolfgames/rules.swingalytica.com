@@ -84,7 +84,6 @@ export default [
       quotes: ['error', 'single', { avoidEscape: true }],
       'no-useless-escape': 'error',
       '@typescript-eslint/no-explicit-any': 'error',
-      'eslint-comments/no-use': ['error', { allow: [] }],
       'no-undef': 'off',
       'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': [
