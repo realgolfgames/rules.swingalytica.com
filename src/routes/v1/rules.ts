@@ -8,6 +8,8 @@ import { schemas } from '../../lib/schemas/schemas';
 import { Params } from '../../lib/types';
 import { defaultQuery } from '../../lib/utils/default_query';
 import { getIsDefault } from '../../lib/utils/get_id_default';
+import { groupRules } from '../../lib/utils/group_rules';
+import { Rule } from '../../types/models';
 
 const rulesRoute: FastifyPluginAsync = async (fastify) => {
   for (const schema of Object.values(schemas.schemas)) {
@@ -33,6 +35,33 @@ const rulesRoute: FastifyPluginAsync = async (fastify) => {
 
       if (is_default) {
         return await defaultQuery(params);
+      } else if (params.grouped === 'true') {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const pipeline: any[] = [
+          {
+            $set: {
+              sortIndex: { $indexOfArray: [desired_order, '$title'] }
+            }
+          },
+          {
+            $set: {
+              sortIndex: {
+                $cond: [
+                  { $lt: ['$sortIndex', 0] },
+                  9999,
+                  '$sortIndex'
+                ]
+              }
+            }
+          },
+          { $sort: { sortIndex: 1, title: 1 } }
+        ];
+
+        const rules = await rule_model.aggregate(pipeline).exec();
+
+        const grouped_rules = groupRules(rules as Rule[]);
+
+        return { grouped_rules };
       } else {
         const skip = params.skip || 0;
         const { limit } = params;
