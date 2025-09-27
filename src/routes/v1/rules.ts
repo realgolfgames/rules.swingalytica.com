@@ -31,6 +31,8 @@ const rulesRoute: FastifyPluginAsync = async (fastify) => {
       const params: Params = parsed.data;
       const is_default = getIsDefault(params, default_params);
 
+      console.log(params);
+
       if (is_default) {
         return await defaultQuery(params);
       } else if (params.grouped === 'true') {
@@ -41,6 +43,19 @@ const rulesRoute: FastifyPluginAsync = async (fastify) => {
         const grouped_rules = groupRules(rules as Rule[]);
 
         return { grouped_rules };
+      } else if (params.id) {
+        const rule = await rule_model
+          .findOne({ id: params.id })
+          .exec();
+
+        if (!rule) {
+          throw new HttpError(
+            `No rule found with id: ${params.id}`,
+            404
+          );
+        }
+
+        return { rule };
       } else {
         const skip = params.skip || 0;
         const { limit } = params;

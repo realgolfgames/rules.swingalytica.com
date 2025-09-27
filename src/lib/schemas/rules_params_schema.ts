@@ -5,7 +5,7 @@ export const rules_params_schema = z.object({
   skip: z.coerce.number().int().min(0).max(25).default(0),
   grouped: z.string().optional().default('false'),
   language: z.string().optional().default('de'),
-  id: z.coerce.number().int().max(25).optional()
+  id: z.string().optional()
 });
 
 export const rules_params_schema_json = {
@@ -16,7 +16,7 @@ export const rules_params_schema_json = {
     skip: { type: 'integer', minimum: 0, maximum: 25, default: 0 },
     grouped: { type: 'string', default: 'false' },
     language: { type: 'string', default: 'de' },
-    id: { type: 'integer', maximum: 25 }
+    id: { type: 'string' }
   },
   additionalProperties: false
 };
