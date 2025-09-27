@@ -31,8 +31,6 @@ const rulesRoute: FastifyPluginAsync = async (fastify) => {
       const params: Params = parsed.data;
       const is_default = getIsDefault(params, default_params);
 
-      console.log(params);
-
       if (is_default) {
         return await defaultQuery(params);
       } else if (params.grouped === 'true') {
