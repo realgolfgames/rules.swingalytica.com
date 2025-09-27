@@ -19,7 +19,7 @@ const rulesRoute: FastifyPluginAsync = async (fastify) => {
 
   fastify.get('/v1/rules', {
     schema: {
-      params: schemas.$ref('RulesParamsSchema')
+      querystring: schemas.$ref('RulesParamsSchema')
     },
     handler: async (req, _res) => {
       const parsed = rules_params_schema.safeParse(req.query);
